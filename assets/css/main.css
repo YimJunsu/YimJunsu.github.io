@@ -180,29 +180,29 @@ h6 {
   font-weight: 700;
   color: var(--heading-color);
 }
-
+/* .header 내부의 social-links 클래스 */
 .header .social-links {
-  margin: 0 0 20px 0;
+  margin: 0 0 20px 0; /* social-links 요소 아래에 20px의 마진 추가 */
 }
-
+/* .header 내부의 social-links에 포함된 모든 링크(a 태그) 스타일 */
 .header .social-links a {
-  font-size: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--default-color), transparent 90%);
-  color: var(--default-color);
-  margin: 0 2px;
-  border-radius: 50%;
-  text-align: center;
-  width: 40px;
-  height: 40px;
-  transition: 0.3s;
+  font-size: 16px; /* 글자 크기 16px 설정 */
+  display: inline-flex; /* 요소를 가로로 나열하며, 플렉스 박스 모델 사용 */
+  align-items: center; /* 세로 방향으로 가운데 정렬 */
+  justify-content: center; /* 가로 방향으로 가운데 정렬 */
+  background: color-mix(in srgb, var(--default-color), transparent 90%); /* 배경 색상 설정: 기본 색상과 투명 색상 혼합 */
+  color: var(--default-color); /* 글자 색상: 기본 색상 */
+  margin: 0 2px; /* 좌우 마진 2px 설정 */
+  border-radius: 50%; /* 둥근 원 모양 만들기 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  width: 40px; /* 너비 40px */
+  height: 40px; /* 높이 40px */
+  transition: 0.3s; /* 배경색 변경 등, 0.3초 동안의 부드러운 전환 효과 */
 }
-
+/* .header 내부의 social-links 링크에 마우스를 올렸을 때 스타일 */
 .header .social-links a:hover {
-  color: var(--contrast-color);
-  background: var(--accent-color);
+  color: var(--contrast-color); /* 마우스를 올렸을 때 글자 색상: 대비 색상 */
+  background: var(--accent-color); /* 마우스를 올렸을 때 배경 색상: 강조 색상 */
 }
 
 @media (min-width: 1200px) {
@@ -682,42 +682,24 @@ section,
 }
 
 /*--------------------------------------------------------------
-# Skills Section
---------------------------------------------------------------*/
-.skills .progress {
-  height: 60px;
-  display: block;
-  background: none;
-  border-radius: 0;
-}
-
-.skills .progress .skill {
-  color: var(--heading-color);
+/* Skills Section - 진행률 막대 스타일을 제거한 스타일 */
+/* 기술 목록 스타일 */
+.skills-list {
+  display: flex; /* flexbox로 항목을 한 줄로 나열 */
+  flex-wrap: wrap; /* 화면에 맞게 줄 바꿈을 허용 */
+  justify-content: center; /* 항목들을 가운데 정렬 */
   padding: 0;
-  margin: 0 0 6px 0;
-  text-transform: uppercase;
-  display: block;
-  font-weight: 600;
-  font-family: var(--heading-font);
+  margin: 0;
 }
 
-.skills .progress .skill .val {
-  float: right;
-  font-style: normal;
+.skills-list .skill-item {
+  font-size: 18px; /* 항목의 글자 크기 */
+  color: var(--heading-color); /* 텍스트 색상 */
+  margin: 0 15px; /* 항목 간 간격 */
+  font-weight: 600; /* 글씨 두껍게 */
+  text-transform: capitalize; /* 첫 글자 대문자 */
+  padding: 5px 0; /* 위아래 여백 추가 */
 }
-
-.skills .progress-bar-wrap {
-  background: color-mix(in srgb, var(--default-color), transparent 90%);
-  height: 10px;
-}
-
-.skills .progress-bar {
-  width: 1px;
-  height: 10px;
-  transition: 0.9s;
-  background-color: var(--accent-color);
-}
-
 /*--------------------------------------------------------------
 # Resume Section
 --------------------------------------------------------------*/
