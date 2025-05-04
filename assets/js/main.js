@@ -1,100 +1,135 @@
 /**
-* Template Name: iPortfolio
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Updated: Jun 29 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * 포트폴리오 웹사이트의 메인 JavaScript 파일
+ * 헤더 토글, 스크롤 이벤트, 애니메이션 등의 인터랙티브 기능을 담당합니다.
+ */
 
 (function() {
   "use strict";
 
   /**
-   * Header toggle
-   */
-  const headerToggleBtn = document.querySelector('.header-toggle');
-
-  function headerToggle() {
-    document.querySelector('#header').classList.toggle('header-show');
-    headerToggleBtn.classList.toggle('bi-list');
-    headerToggleBtn.classList.toggle('bi-x');
-  }
-  headerToggleBtn.addEventListener('click', headerToggle);
-
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.header-show')) {
-        headerToggle();
-      }
-    });
-
-  });
-
-  /**
-   * Toggle mobile nav dropdowns
-   */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
-      e.preventDefault();
-      this.parentNode.classList.toggle('active');
-      this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-      e.stopImmediatePropagation();
-    });
-  });
-
-  /**
-   * Preloader
+   * 페이지 로드 완료 시 preloader 숨김 처리
    */
   const preloader = document.querySelector('#preloader');
   if (preloader) {
     window.addEventListener('load', () => {
-      preloader.remove();
+      setTimeout(() => {
+        preloader.classList.add('loaded');
+        setTimeout(() => {
+          preloader.style.display = 'none';
+        }, 1000);
+      }, 1000);
     });
   }
 
   /**
-   * Scroll top button
+   * 헤더 토글 버튼 기능
    */
-  let scrollTop = document.querySelector('.scroll-top');
-
-  function toggleScrollTop() {
-    if (scrollTop) {
-      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-    }
+  const toggleButton = document.querySelector('.header-toggle');
+  
+  if (toggleButton) {
+    toggleButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      const body = document.querySelector('body');
+      body.classList.toggle('mobile-nav-active');
+      
+      // 클래스 토글
+      this.classList.toggle('bi-list');
+      this.classList.toggle('bi-x');
+      
+      // 모바일 메뉴 열렸을 때 스크롤 방지
+      if (body.classList.contains('mobile-nav-active')) {
+        document.documentElement.style.overflow = 'hidden';
+      } else {
+        document.documentElement.style.overflow = '';
+      }
+    });
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+  
+  // 화면 크기 변경 시 자동으로 모바일 네비게이션 상태 조정
+  window.addEventListener('resize', function() {
+    if (window.innerWidth >= 1200) {
+      // 데스크톱 사이즈에서는 모바일 네비게이션 비활성화
+      document.querySelector('body').classList.remove('mobile-nav-active');
+      if (toggleButton) {
+        toggleButton.classList.add('bi-list');
+        toggleButton.classList.remove('bi-x');
+      }
+    }
+  });
+
+  /**
+   * 모바일 화면에서 메뉴 클릭시 메뉴 닫기
+   */
+  document.querySelectorAll('#navmenu a').forEach(navItem => {
+    navItem.addEventListener('click', () => {
+      if (document.querySelector('body').classList.contains('mobile-nav-active')) {
+        document.querySelector('body').classList.remove('mobile-nav-active');
+        document.querySelector('.header-toggle').classList.add('bi-list');
+        document.querySelector('.header-toggle').classList.remove('bi-x');
+      }
     });
   });
 
-  window.addEventListener('load', toggleScrollTop);
-  document.addEventListener('scroll', toggleScrollTop);
+  /**
+   * 스크롤 위치에 따른 네비게이션 활성화
+   */
+  const navLinks = document.querySelectorAll('#navmenu a');
+  
+  function navActive() {
+    let position = window.scrollY + 200;
+    navLinks.forEach(navLink => {
+      if (!navLink.hash) return;
+      let section = document.querySelector(navLink.hash);
+      if (!section) return;
+      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
+        navLink.classList.add('active');
+      } else {
+        navLink.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('load', navActive);
+  document.addEventListener('scroll', navActive);
 
   /**
-   * Animation on scroll function and init
+   * 스크롤 상단 버튼 표시/숨김
    */
-  function aosInit() {
+  const scrollTop = document.querySelector('.scroll-top');
+  if (scrollTop) {
+    const toggleScrollTop = function() {
+      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
+    }
+    window.addEventListener('load', toggleScrollTop);
+    document.addEventListener('scroll', toggleScrollTop);
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  /**
+   * 애니메이션 초기화 (AOS 라이브러리)
+   */
+  function initializeAOS() {
     AOS.init({
-      duration: 600,
+      duration: 800,
       easing: 'ease-in-out',
       once: true,
       mirror: false
     });
   }
-  window.addEventListener('load', aosInit);
+  window.addEventListener('load', initializeAOS);
 
   /**
-   * Init typed.js
+   * Typed.js 초기화 (타이핑 효과)
    */
-  const selectTyped = document.querySelector('.typed');
-  if (selectTyped) {
-    let typed_strings = selectTyped.getAttribute('data-typed-items');
+  const typed = document.querySelector('.typed');
+  if (typed) {
+    let typed_strings = typed.getAttribute('data-typed-items');
     typed_strings = typed_strings.split(',');
     new Typed('.typed', {
       strings: typed_strings,
@@ -106,124 +141,82 @@
   }
 
   /**
-   * Initiate Pure Counter
+   * PureCounter 초기화 (숫자 카운팅 효과)
    */
   new PureCounter();
 
   /**
-   * Animate the skills items on reveal
-   */
-  let skillsAnimation = document.querySelectorAll('.skills-animation');
-  skillsAnimation.forEach((item) => {
-    new Waypoint({
-      element: item,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = item.querySelectorAll('.progress .progress-bar');
-        progress.forEach(el => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%';
-        });
-      }
-    });
-  });
-
-  /**
-   * Initiate glightbox
+   * GLightbox 초기화 (이미지 갤러리)
    */
   const glightbox = GLightbox({
     selector: '.glightbox'
   });
 
   /**
-   * Init isotope layout and filters
+   * Isotope 레이아웃 초기화 (포트폴리오 필터링)
    */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-
-    let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
+  let portfolioContainer = document.querySelector('.portfolio-container');
+  if (portfolioContainer) {
+    let portfolioIsotope = new Isotope(portfolioContainer, {
+      itemSelector: '.portfolio-item',
+      layoutMode: 'fitRows'
     });
 
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
-        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+    let portfolioFilters = document.querySelectorAll('#portfolio-flters li');
+    portfolioFilters.forEach(filter => {
+      filter.addEventListener('click', function(e) {
+        e.preventDefault();
+        portfolioFilters.forEach(function(el) {
+          el.classList.remove('filter-active');
+        });
         this.classList.add('filter-active');
-        initIsotope.arrange({
+
+        portfolioIsotope.arrange({
           filter: this.getAttribute('data-filter')
         });
-        if (typeof aosInit === 'function') {
-          aosInit();
-        }
-      }, false);
-    });
-
-  });
-
-  /**
-   * Init swiper sliders
-   */
-  function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
-
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
+      });
     });
   }
 
-  window.addEventListener("load", initSwiper);
+  /**
+   * 스킬 아이템 애니메이션
+   */
+  function initSkillsAnimation() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    
+    skillItems.forEach((item, index) => {
+      // 스태거드 애니메이션을 위한 지연 시간 설정
+      setTimeout(() => {
+        item.classList.add('animated');
+      }, index * 100);
+    });
+  }
+  
+  window.addEventListener('load', initSkillsAnimation);
 
   /**
-   * Correct scrolling position upon page load for URLs containing hash links.
+   * 이미지 로딩 완료 후 Isotope 레이아웃 재정렬
    */
-  window.addEventListener('load', function(e) {
-    if (window.location.hash) {
-      if (document.querySelector(window.location.hash)) {
-        setTimeout(() => {
-          let section = document.querySelector(window.location.hash);
-          let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
-          window.scrollTo({
-            top: section.offsetTop - parseInt(scrollMarginTop),
-            behavior: 'smooth'
+  const imageLoaded = document.querySelector('.isotope-container');
+  if (imageLoaded) {
+    imagesLoaded(imageLoaded, function() {
+      const iso = new Isotope(imageLoaded, {
+        itemSelector: '.isotope-item',
+      });
+      
+      // 필터 버튼 이벤트 리스너
+      document.querySelectorAll('.isotope-filters li').forEach(filter => {
+        filter.addEventListener('click', function() {
+          document.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+          this.classList.add('filter-active');
+          
+          const filterValue = this.getAttribute('data-filter');
+          iso.arrange({
+            filter: filterValue
           });
-        }, 100);
-      }
-    }
-  });
-
-  /**
-   * Navmenu Scrollspy
-   */
-  let navmenulinks = document.querySelectorAll('.navmenu a');
-
-  function navmenuScrollspy() {
-    navmenulinks.forEach(navmenulink => {
-      if (!navmenulink.hash) return;
-      let section = document.querySelector(navmenulink.hash);
-      if (!section) return;
-      let position = window.scrollY + 200;
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
-        navmenulink.classList.add('active');
-      } else {
-        navmenulink.classList.remove('active');
-      }
-    })
+        });
+      });
+    });
   }
-  window.addEventListener('load', navmenuScrollspy);
-  document.addEventListener('scroll', navmenuScrollspy);
 
 })();
